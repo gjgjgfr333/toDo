@@ -2,6 +2,7 @@ import React from 'react';
 import {Pressable, StyleSheet, Text, View} from "react-native";
 import Svg, {Path} from "react-native-svg";
 import {router} from "expo-router";
+import {blackColor} from "@/src/shared/const/constColor";
 
 export const CreatePostHeader = () => {
 
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 20,
-        color: '#000',
+        color: blackColor,
         fontWeight: '600',
     },
     button: {

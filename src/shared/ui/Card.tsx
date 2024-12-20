@@ -1,7 +1,18 @@
 import React, {memo} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {borderRadius} from "@/src/shared/const/otherConst";
+import {borderRadius, screenWidth} from "@/src/shared/const/otherConst";
 import {DeleteSVG} from "@/src/shared/ui/SVG/DeleteSVG";
+import {StatusView} from "@/src/shared/StatusView";
+import {
+    blackColor,
+    darkGreenColor,
+    darkRedColor,
+    grayColor,
+    greenColor,
+    redColor,
+    whiteColor
+} from "@/src/shared/const/constColor";
+import Logo from '../../../public/img/MainLogo.jpg'
 
 interface ICardProps {
     title: string;
@@ -20,21 +31,26 @@ export const Card = memo((props: ICardProps) => {
         <View style={styles.container}>
             <View style={styles.secondContainer}>
                 <Image
-                    source={{uri: src ?? ''}}
+                    source={src ? {uri: src} : Logo}
                     style={styles.image}
                 />
+
                 <View style={styles.infoBlock}>
                     <Text style={styles.title}>{title}</Text>
-                    <Text>{`post was created: ${dataCreatePost}`}</Text>
+                    <Text style={styles.dataCreatePost}>{`Post was created: ${dataCreatePost}`}</Text>
 
                     {mode === 'Published' ? (
-                        <View style={[styles.modeContainer, {backgroundColor: '#2c9713'}]}>
-                            <Text style={[styles.modeText, {color: "#354919"}]}>{mode}</Text>
-                        </View>
+                        <StatusView
+                            backgroundColor={greenColor}
+                            color={darkGreenColor}
+                            mode={mode}
+                        />
                     ) : (
-                        <View style={[styles.modeContainer, {backgroundColor: '#ca0b3e'}]}>
-                            <Text style={[styles.modeText, {color: "#50041a"}]}>{mode}</Text>
-                        </View>
+                        <StatusView
+                            backgroundColor={redColor}
+                            color={darkRedColor}
+                            mode={mode}
+                        />
                     )}
                 </View>
             </View>
@@ -47,22 +63,33 @@ export const Card = memo((props: ICardProps) => {
                     height={'35'}
                 />
             </TouchableOpacity>
-            <Text>{description}</Text>
+            <Text style={StyleSheet.flatten([styles.description, {
+                fontWeight: 'bold',
+                color: blackColor
+            }])}>Description</Text>
+            <Text style={styles.description}>{description}</Text>
         </View>
     );
 });
 
 const styles = StyleSheet.create({
+    dataCreatePost: {
+        flexWrap: 'wrap',
+        fontSize: 15,
+        fontWeight: 'bold',
+        width: '95%',
+    },
     deleteButton: {
         position: 'absolute',
         right: 10,
         top: 10,
     },
     container: {
-        backgroundColor: '#fff',
-        width: '100%',
+        backgroundColor: whiteColor,
+        maxWidth: screenWidth,
         padding: 10,
-        marginBottom: 15
+        marginBottom: 15,
+        gap: 10,
     },
     secondContainer: {
         flexDirection: 'row',
@@ -75,18 +102,16 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 20,
-        color: 'gray'
+        color: grayColor
     },
     image: {
-        width: 150,
-        height: 150,
+        width: 120,
+        height: 120,
         borderRadius: borderRadius,
     },
-    modeContainer: {
-        padding: 10,
-        borderRadius: borderRadius,
-    },
-    modeText: {
-        fontSize: 20,
+    description: {
+        fontSize: 15,
+        color: grayColor,
+        fontWeight: 'normal',
     }
 })

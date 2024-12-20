@@ -1,24 +1,26 @@
 import React, {memo} from 'react';
-import {Pressable, StyleProp, StyleSheet, ViewStyle} from "react-native";
+import {StyleProp, StyleSheet, TouchableOpacity, ViewStyle} from "react-native";
 import {buttonColor} from "@/src/shared/const/constColor";
 
 interface ButtonProps {
     children?: React.ReactNode;
     onPressFunc?: () => void;
     style?: StyleProp<ViewStyle>
+    disabled?: boolean;
 }
 
 export const ButtonPressable = memo((props: ButtonProps) => {
 
-    const {children, onPressFunc, style} = props;
+    const {children, onPressFunc, style, disabled} = props;
 
     return (
-        <Pressable
-            style={[styles.button, style]}
+        <TouchableOpacity
+            style={StyleSheet.flatten([styles.button, style, disabled ? {opacity: 0.5} : {}])}
             onPress={onPressFunc}
+            disabled={disabled}
         >
             {children}
-        </Pressable>
+        </TouchableOpacity>
     );
 });
 

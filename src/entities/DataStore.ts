@@ -1,8 +1,7 @@
 import {makeAutoObservable} from "mobx";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
-interface IDataStore {
+export interface IDataStore {
     name: string,
     mode: string,
     description: string,
@@ -13,25 +12,14 @@ interface IDataStore {
 
 export class DataStore {
     private currentData: IDataStore[] = [];
-    private isOpenModal: boolean = false;
 
     constructor() {
         makeAutoObservable(this);
         this.loadData()
 
-        this.setData = this.setData.bind(this);
-        this.deletePost = this.deletePost.bind(this);
-        this.deleteAllPosts = this.deleteAllPosts.bind(this);
-        this.setIsOpenModal = this.setIsOpenModal.bind(this);
-
-    }
-
-    get getIsOpenModal(): boolean {
-        return this.isOpenModal;
-    }
-
-    setIsOpenModal(value: boolean) {
-        this.isOpenModal = value;
+        this.setPostData = this.setPostData.bind(this);
+        this.deletePostData = this.deletePostData.bind(this);
+        this.deleteAllPostsData = this.deleteAllPostsData.bind(this);
     }
 
     async loadData() {
@@ -56,24 +44,23 @@ export class DataStore {
         }
     }
 
-    get getData() {
+    get getPostData() {
         return this.currentData;
-
     }
 
-    async setData(data: IDataStore) {
+    async setPostData(data: IDataStore) {
         this.currentData?.push(data)
         await this.saveData();
     }
 
-    async deletePost(postId: string) {
+    async deletePostData(postId: string) {
         const data = this.currentData
 
         this.currentData = data.filter(post => post.postId !== postId);
         await this.saveData();
     }
 
-    async deleteAllPosts() {
+    async deleteAllPostsData() {
         this.currentData = []
         await this.saveData();
     }

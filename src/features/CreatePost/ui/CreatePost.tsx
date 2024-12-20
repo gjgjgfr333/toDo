@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {Pressable, StyleSheet, Text, TextInput, View} from "react-native";
 import {borderRadius} from "@/src/shared/const/otherConst";
-import {mainBackground} from "@/src/shared/const/constColor";
+import {blackColor, mainBackground, whiteColor} from "@/src/shared/const/constColor";
 import {DownArrowSvg} from "@/src/shared/ui/SVG/DownArrowSVG";
 import {ModalChooseSetting} from "@/src/shared/ui/ModalChooseSetting";
 import * as ImagePicker from 'expo-image-picker'
@@ -10,16 +10,17 @@ import {observer} from "mobx-react";
 import {useStore} from "@/src/entities/RootStore";
 import {ButtonPressable} from "@/src/shared/ui/Button";
 import {router} from "expo-router";
+import {getCurrentData} from "@/src/shared/helper/getCurrentData";
 
 const list = [
     'Published',
-    'NoPublished'
+    'No published'
 ]
 
 export const CreatePost = observer(() => {
 
     const {dataStore} = useStore()
-    const {setData} = dataStore
+    const {setPostData} = dataStore
 
     const [inputText, setInputText] = useState<string>('')
     const [selectValue, setSelectValue] = useState<string>(list[0]);
@@ -27,9 +28,6 @@ export const CreatePost = observer(() => {
     const [description, setDescription] = useState<string>('')
     const [heightDescription, setHeightDescription] = useState<number>()
     const [image, setImage] = useState<string | null>(null)
-
-    const currentDate = new Date();
-    const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}.${(currentDate.getMonth() + 1).toString().padStart(2, '0')}.${currentDate.getFullYear()} ${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
 
     const pickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -39,9 +37,9 @@ export const CreatePost = observer(() => {
         }
 
         const result = await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: true, // Позволяет обрезать фото
-            aspect: [4, 3], // Пропорции для обрезки (например, 4:3)
-            quality: 1, // Качество изображения от 0 до 1
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
         });
 
         if (!result.canceled) {
@@ -49,14 +47,18 @@ export const CreatePost = observer(() => {
         }
     }
 
+    const isDisabledButton = useMemo(() => {
+        return Boolean(selectValue.length <= 0 || description.length <= 0);
+    }, [selectValue, description]);
+
     const setAllData = () => {
-        setData({
+        setPostData({
             description,
             mode: selectValue,
             photo: image,
             name: inputText,
             postId: String(Date.now()),
-            dataCreate: formattedDate
+            dataCreate: getCurrentData()
         })
         router.push('..')
     }
@@ -81,7 +83,7 @@ export const CreatePost = observer(() => {
                 <TextInput
                     value={description}
                     onChangeText={(text) => setDescription(text)}
-                    style={[styles.inputText, {height: heightDescription}]}
+                    style={StyleSheet.flatten([styles.inputText, {height: heightDescription}])}
                     placeholderTextColor="#A9A9A9"
                     placeholder={'Description'}
                     multiline
@@ -105,8 +107,9 @@ export const CreatePost = observer(() => {
             <ButtonPressable
                 onPressFunc={setAllData}
                 style={styles.submitButton}
+                disabled={isDisabledButton}
             >
-                <Text style={[styles.textSelectBlock, {color: '#fff'}]}>Select</Text>
+                <Text style={StyleSheet.flatten([styles.textSelectBlock, {color: whiteColor}])}>Select</Text>
             </ButtonPressable>
 
             {isOpenModal && (
@@ -133,7 +136,7 @@ const styles = StyleSheet.create({
         borderRadius: borderRadius,
         backgroundColor: mainBackground,
         fontSize: 20,
-        color: '#000'
+        color: blackColor
     },
     mainContainer: {
         paddingBottom: 10,

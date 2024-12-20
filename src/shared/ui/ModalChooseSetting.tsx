@@ -1,7 +1,8 @@
 import React, {memo, useCallback} from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {Modal, Pressable, StyleSheet, Text, View} from 'react-native';
 import {DownArrowSvg} from "@/src/shared/ui/SVG/DownArrowSVG";
 import {ButtonPressable} from "@/src/shared/ui/Button";
+import {grayColor, whiteColor} from "@/src/shared/const/constColor";
 
 interface ModalChooseSettingProps {
     setIsOpenModal: (value: boolean) => void,
@@ -20,34 +21,40 @@ export const ModalChooseSetting = memo((props: ModalChooseSettingProps) => {
     }, [])
 
     return (
-        <View style={styles.overlay}>
-            <View style={styles.viewData}>
-                {list.map((item) => (
-                    <Pressable
-                        key={item}
-                        onPress={() => onCloseFunc(item)}
-                        style={styles.buttonContainer}
-                    >
-                        <Text style={styles.text}>{item}</Text>
-                        {item === selectItem && (<DownArrowSvg/>)}
-                    </Pressable>
-                ))}
+        <Modal
+            transparent={true}
+            animationType="fade"
+        >
+            <View style={styles.overlay}>
+                <View style={styles.viewData}>
+                    {list.map((item) => (
+                        <Pressable
+                            key={item}
+                            onPress={() => onCloseFunc(item)}
+                            style={styles.buttonContainer}
+                        >
+                            <Text style={styles.text}>{item}</Text>
+                            {item === selectItem && (<DownArrowSvg/>)}
+                        </Pressable>
+                    ))}
 
-                <ButtonPressable
-                    onPressFunc={() => setIsOpenModal(false)}
-                    style={styles.buttonClose}
-                >
-                    <Text style={[styles.text, {color: '#fff'}]}>Close</Text>
-                </ButtonPressable>
+                    <ButtonPressable
+                        onPressFunc={() => setIsOpenModal(false)}
+                        style={styles.buttonClose}
+                    >
+                        <Text style={StyleSheet.flatten([styles.text, {color: whiteColor}])}>Close</Text>
+                    </ButtonPressable>
+                </View>
             </View>
-        </View>
+        </Modal>
+
     );
 });
 
 const styles = StyleSheet.create({
     buttonClose: {
         position: 'absolute',
-        bottom: 90,
+        bottom: 20,
         left: 20,
         width: '100%',
     },
@@ -55,7 +62,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         borderBottomWidth: 1,
-        borderBottomColor: 'gray',
+        borderBottomColor: grayColor,
     },
     overlay: {
         position: 'absolute',
@@ -70,17 +77,17 @@ const styles = StyleSheet.create({
         bottom: 0,
         width: '100%',
         height: '50%',
-        backgroundColor: '#fff',
+        backgroundColor: whiteColor,
         zIndex: 5,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
-        paddingTop: 10,
+        paddingTop: 20,
         paddingLeft: 20,
         paddingRight: 20,
     },
     text: {
         fontSize: 20,
-        color: 'gray',
+        color: grayColor,
         fontWeight: '600',
     }
 })

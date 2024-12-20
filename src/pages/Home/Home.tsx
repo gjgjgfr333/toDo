@@ -1,68 +1,87 @@
-import React, {useCallback} from 'react';
-import {Pressable, ScrollView, StyleSheet, Text, View} from "react-native";
+import React, {useCallback, useState} from 'react';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {ButtonPressable} from "@/src/shared/ui/Button";
 import {ListIsEmpty} from "@/src/shared/ui/ListIsEmpty";
-import {mainBackground} from "@/src/shared/const/constColor";
+import {buttonColor, mainBackground, whiteColor} from "@/src/shared/const/constColor";
 import {router} from "expo-router";
 import {observer} from "mobx-react";
 import {useStore} from "@/src/entities/RootStore";
 import {Card} from "@/src/shared/ui/Card";
 import {TrashSVG} from "@/src/shared/ui/SVG/TrashSVG";
+import {ModalWindow} from "@/src/shared/ui/ModalWindow";
+import {borderRadius} from "@/src/shared/const/otherConst";
 
 export const Home = observer(() => {
 
     const {dataStore} = useStore()
 
-    const {getData, deletePost, deleteAllPosts} = dataStore
-    const data = getData
+    const {getPostData, deletePostData, deleteAllPostsData} = dataStore
+    const data = getPostData
+
+    const [isOpenModal, setIsOpenModal] = useState(false)
 
     const navigateToCreatePostPage = useCallback(() => {
         router.navigate('/(tabs)/explore');
     }, [])
 
-    const deletePostMemo = useCallback((postId: string) => {
-        deletePost(postId)
+    const deletePostFunc = useCallback((postId: string) => {
+        deletePostData(postId)
     }, [])
 
-    const deleteAllPostsMemo = useCallback(() => {
-        deleteAllPosts()
+    const deleteAllPostsFunc = useCallback(() => {
+        deleteAllPostsData()
+        setIsOpenModal(false)
     }, [])
+
+    const closeModal = () => {
+        setIsOpenModal(false)
+    }
 
     return (
         <View style={styles.mainContainer}>
             {data.length > 1 && (
-                <Pressable
-                    onPress={deleteAllPostsMemo}
+                <TouchableOpacity
+                    onPress={() => setIsOpenModal(true)}
                     style={styles.deleteButton}
                 >
                     <TrashSVG/>
-                </Pressable>)}
+                </TouchableOpacity>)
+            }
 
-            <ScrollView
-                style={styles.scrollContainer}
-            >
+            <View style={styles.listContainer}>
                 {data.length === 0 ? (
                     <ListIsEmpty/>
                 ) : (
-                    data.map((item) => (
-                        <Card
-                            key={item.postId}
-                            src={item.photo}
-                            title={item.name}
-                            description={item.description}
-                            mode={item.mode}
-                            deleteFunc={() => deletePostMemo(item.postId)}
-                            dataCreatePost={item.dataCreate}
-                        />
-                    ))
+                    <FlatList
+                        data={data}
+                        renderItem={({item}) => (
+                            <Card
+                                key={item.postId}
+                                src={item.photo}
+                                title={item.name}
+                                description={item.description}
+                                mode={item.mode}
+                                deleteFunc={() => deletePostFunc(item.postId)}
+                                dataCreatePost={item.dataCreate}
+                            />
+                        )}
+                        keyExtractor={(item) => item.postId}
+                    />
                 )}
-            </ScrollView>
+            </View>
 
             <ButtonPressable
                 onPressFunc={navigateToCreatePostPage}
             >
                 <Text style={styles.text}>New Post</Text>
             </ButtonPressable>
+
+            {isOpenModal && (
+                <ModalWindow
+                    onSuccess={deleteAllPostsFunc}
+                    closeModal={closeModal}
+                />
+            )}
         </View>
     );
 });
@@ -70,21 +89,27 @@ export const Home = observer(() => {
 const styles = StyleSheet.create({
     deleteButton: {
         marginBottom: 10,
-        left: 150,
+        left: 170,
+        backgroundColor: buttonColor,
+        borderRadius: borderRadius,
     },
     mainContainer: {
         flex: 1,
         backgroundColor: mainBackground,
         alignItems: "center",
-        justifyContent: "space-between",
+
         paddingTop: 10,
         paddingBottom: 10,
     },
     text: {
         fontSize: 25,
-        color: '#fff'
+        color: whiteColor
     },
     scrollContainer: {
         gap: 10
-    }
+    },
+    listContainer: {
+        flex: 1,
+        marginBottom: 20,
+    },
 })

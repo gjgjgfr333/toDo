@@ -2,6 +2,7 @@ import React from 'react';
 import {
     View, Text, StyleSheet
 } from "react-native";
+import {grayColor} from "@/src/shared/const/constColor";
 
 export const ListIsEmpty = () => {
     return (
@@ -20,9 +21,8 @@ const styles = StyleSheet.create({
         marginTop: 100
     },
     text: {
-        color: '#8c959c',
+        color: grayColor,
         fontSize: 20,
         fontWeight: "600"
     }
-
 })
