@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {borderRadius} from "@/src/shared/const/otherConst";
 import {DeleteSVG} from "@/src/shared/ui/SVG/DeleteSVG";
 
@@ -38,12 +38,15 @@ export const Card = memo((props: ICardProps) => {
                     )}
                 </View>
             </View>
-            <Pressable
+            <TouchableOpacity
                 onPress={deleteFunc}
                 style={styles.deleteButton}
             >
-                <DeleteSVG/>
-            </Pressable>
+                <DeleteSVG
+                    width={'35'}
+                    height={'35'}
+                />
+            </TouchableOpacity>
             <Text>{description}</Text>
         </View>
     );

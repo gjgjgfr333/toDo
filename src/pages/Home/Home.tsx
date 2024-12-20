@@ -14,7 +14,6 @@ export const Home = observer(() => {
     const {dataStore} = useStore()
 
     const {getData, deletePost, deleteAllPosts} = dataStore
-
     const data = getData
 
     const navigateToCreatePostPage = useCallback(() => {
