@@ -5,8 +5,8 @@ import {buttonColor} from "@/src/shared/const/constColor";
 interface ButtonProps {
     children?: React.ReactNode;
     onPressFunc?: () => void;
-    style?: StyleProp<ViewStyle>}
-
+    style?: StyleProp<ViewStyle>
+}
 
 export const ButtonPressable = memo((props: ButtonProps) => {
 

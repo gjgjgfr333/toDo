@@ -7,7 +7,6 @@ import {ModalChooseSetting} from "@/src/shared/ui/ModalChooseSetting";
 import * as ImagePicker from 'expo-image-picker'
 import {PhotoItem} from "@/src/shared/ui/PhotoItem";
 import {observer} from "mobx-react";
-import {DataStore} from "@/src/entities/DataStore";
 import {useStore} from "@/src/entities/RootStore";
 import {ButtonPressable} from "@/src/shared/ui/Button";
 import {router} from "expo-router";
@@ -20,7 +19,7 @@ const list = [
 export const CreatePost = observer(() => {
 
     const {dataStore} = useStore()
-    const {getData, setData} = dataStore
+    const {setData} = dataStore
 
     const [inputText, setInputText] = useState<string>('')
     const [selectValue, setSelectValue] = useState<string>(list[0]);
@@ -28,6 +27,9 @@ export const CreatePost = observer(() => {
     const [description, setDescription] = useState<string>('')
     const [heightDescription, setHeightDescription] = useState<number>()
     const [image, setImage] = useState<string | null>(null)
+
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}.${(currentDate.getMonth() + 1).toString().padStart(2, '0')}.${currentDate.getFullYear()} ${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
 
     const pickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -52,7 +54,9 @@ export const CreatePost = observer(() => {
             description,
             mode: selectValue,
             photo: image,
-            name: inputText
+            name: inputText,
+            postId: String(Date.now()),
+            dataCreate: formattedDate
         })
         router.push('..')
     }
@@ -93,19 +97,21 @@ export const CreatePost = observer(() => {
                 >
                     <PhotoItem
                         src={image}
+                        clearFunc={() => setImage(null)}
                     />
                 </Pressable>
             </View>
 
             <ButtonPressable
                 onPressFunc={setAllData}
+                style={styles.submitButton}
             >
-                <Text style={styles.textSelectBlock}>Select</Text>
+                <Text style={[styles.textSelectBlock, {color: '#fff'}]}>Select</Text>
             </ButtonPressable>
 
             {isOpenModal && (
                 <ModalChooseSetting
-                    closeModal={setIsOpenModal}
+                    setIsOpenModal={setIsOpenModal}
                     list={list}
                     selectItem={selectValue}
                     setSelectItem={setSelectValue}
@@ -116,6 +122,11 @@ export const CreatePost = observer(() => {
 });
 
 const styles = StyleSheet.create({
+    submitButton: {
+        position: "absolute",
+        bottom: 90,
+        left: 20
+    },
     inputText: {
         width: '95%',
         height: 50,

@@ -6,17 +6,32 @@ interface IDataStore {
     name: string,
     mode: string,
     description: string,
-    photo: string | null
+    photo: string | null,
+    postId: string,
+    dataCreate: string
 }
 
 export class DataStore {
     private currentData: IDataStore[] = [];
+    private isOpenModal: boolean = false;
 
     constructor() {
         makeAutoObservable(this);
         this.loadData()
 
         this.setData = this.setData.bind(this);
+        this.deletePost = this.deletePost.bind(this);
+        this.deleteAllPosts = this.deleteAllPosts.bind(this);
+        this.setIsOpenModal = this.setIsOpenModal.bind(this);
+
+    }
+
+    get getIsOpenModal(): boolean {
+        return this.isOpenModal;
+    }
+
+    setIsOpenModal(value: boolean) {
+        this.isOpenModal = value;
     }
 
     async loadData() {
@@ -48,6 +63,18 @@ export class DataStore {
 
     async setData(data: IDataStore) {
         this.currentData?.push(data)
+        await this.saveData();
+    }
+
+    async deletePost(postId: string) {
+        const data = this.currentData
+
+        this.currentData = data.filter(post => post.postId !== postId);
+        await this.saveData();
+    }
+
+    async deleteAllPosts() {
+        this.currentData = []
         await this.saveData();
     }
 }

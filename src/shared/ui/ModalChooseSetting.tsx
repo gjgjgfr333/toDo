@@ -1,11 +1,10 @@
 import React, {memo, useCallback} from 'react';
-import {Pressable, StyleSheet, View, Text} from 'react-native';
-import {mainBackground} from "@/src/shared/const/constColor";
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {DownArrowSvg} from "@/src/shared/ui/SVG/DownArrowSVG";
 import {ButtonPressable} from "@/src/shared/ui/Button";
 
 interface ModalChooseSettingProps {
-    closeModal: (value: boolean) => void,
+    setIsOpenModal: (value: boolean) => void,
     list: string[],
     selectItem: string,
     setSelectItem: (value: string) => void,
@@ -13,10 +12,10 @@ interface ModalChooseSettingProps {
 
 export const ModalChooseSetting = memo((props: ModalChooseSettingProps) => {
 
-    const {closeModal, list, selectItem, setSelectItem} = props;
+    const {setIsOpenModal, list, selectItem, setSelectItem} = props;
 
     const onCloseFunc = useCallback((item: string) => {
-        closeModal(false)
+        setIsOpenModal(false)
         setSelectItem(item)
     }, [])
 
@@ -35,7 +34,7 @@ export const ModalChooseSetting = memo((props: ModalChooseSettingProps) => {
                 ))}
 
                 <ButtonPressable
-                    onPressFunc={() => closeModal(false)}
+                    onPressFunc={() => setIsOpenModal(false)}
                     style={styles.buttonClose}
                 >
                     <Text style={[styles.text, {color: '#fff'}]}>Close</Text>

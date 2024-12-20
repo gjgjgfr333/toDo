@@ -1,18 +1,20 @@
 import React, {memo} from 'react';
-import {View, Image, Text, StyleSheet} from 'react-native';
-import {mainBackground} from "@/src/shared/const/constColor";
+import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {borderRadius} from "@/src/shared/const/otherConst";
+import {DeleteSVG} from "@/src/shared/ui/SVG/DeleteSVG";
 
 interface ICardProps {
     title: string;
     src: string | null
     mode: string
-    description: string
+    description: string,
+    deleteFunc: () => void
+    dataCreatePost: string
 }
 
 export const Card = memo((props: ICardProps) => {
 
-    const {src, mode, description, title} = props;
+    const {src, mode, description, title, deleteFunc, dataCreatePost} = props;
 
     return (
         <View style={styles.container}>
@@ -23,6 +25,7 @@ export const Card = memo((props: ICardProps) => {
                 />
                 <View style={styles.infoBlock}>
                     <Text style={styles.title}>{title}</Text>
+                    <Text>{`post was created: ${dataCreatePost}`}</Text>
 
                     {mode === 'Published' ? (
                         <View style={[styles.modeContainer, {backgroundColor: '#2c9713'}]}>
@@ -35,12 +38,23 @@ export const Card = memo((props: ICardProps) => {
                     )}
                 </View>
             </View>
+            <Pressable
+                onPress={deleteFunc}
+                style={styles.deleteButton}
+            >
+                <DeleteSVG/>
+            </Pressable>
             <Text>{description}</Text>
         </View>
     );
 });
 
 const styles = StyleSheet.create({
+    deleteButton: {
+        position: 'absolute',
+        right: 10,
+        top: 10,
+    },
     container: {
         backgroundColor: '#fff',
         width: '100%',
